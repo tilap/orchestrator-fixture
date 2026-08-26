@@ -1,0 +1,46 @@
+# Project configuration — section 16.2 of the architecture.
+# One file, versioned with the repo. Configuration only: execution state lives
+# in run/, beside the repo, and never here.
+
+[project]
+name = "orchestrator-fixture"
+trunk = "main"
+integration_branch = "sprint/01"
+repo = "tilap/orchestrator-fixture"
+# A new project starts at 2 and moves up once the loop has proven itself.
+autonomy_level = 2
+
+# What "lint" or "test" actually runs. The contract selects among these names;
+# it never redefines them. The builder locally and CI remotely run exactly this.
+[validation]
+lint = "npm run lint --silent"
+test = "npm run test --silent"
+build = "npm run build --silent"
+
+[scope]
+# Scope conventions, derived from the folder structure. Advisory: each contract
+# declares its own globs.
+conventions = ["src/**", "tests/**"]
+
+[ci]
+provider = "github-actions"
+workflow = "ci.yml"
+
+[merge]
+commit = "squash"   # one task, one branch, one commit on the integration branch
+queue = "manager"   # serialised by the manager, not by the forge
+
+[limits]
+wave_width = 3              # capped by the machine, not by the dependency graph
+auto_fix_attempts = 2       # the third failed attempt escalates REPEATED_FAILURE
+lease_ttl_seconds = 900     # an assigned task whose heartbeat is older is an orphan
+agent_timeout_seconds = 1800 # a single agent call that outlives this is killed
+cost_per_task_usd = 2.0     # BUDGET_EXCEEDED — a task may cross it on attempt one
+cost_global_usd = 25.0      # the loop stops rather than discovering this on a bill
+
+[agent]
+runtime = "script"
+roles_dir = "agents"
+# One executable per role. Nothing outside the wrapper can tell its commits
+# from an agent's — which is the whole point of section 5.6.
+scripts_dir = "agent-scripts"

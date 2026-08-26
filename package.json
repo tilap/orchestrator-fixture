@@ -1,0 +1,12 @@
+{
+  "name": "fixture-report",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Disposable bench for the orchestrator. Not a product.",
+  "scripts": {
+    "lint": "node scripts/lint.mjs",
+    "test": "node --test tests/",
+    "build": "node scripts/build.mjs"
+  }
+}

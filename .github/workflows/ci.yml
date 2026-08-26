@@ -1,0 +1,20 @@
+name: ci
+
+# The pipeline's third gate. It runs the same commands the builder ran locally,
+# read from the same orchestrator.toml — a CI with its own definition of "test"
+# drifts, and it is always the builder that believes it validated.
+on:
+  pull_request:
+    branches: ["**"]
+  push:
+    branches: ["sprint/**"]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node scripts/validate.mjs
